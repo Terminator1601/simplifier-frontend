@@ -1,0 +1,203 @@
+/* Container for the entire component */
+.file-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    width: 90%;
+    max-width: 800px;
+    margin: auto;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Title */
+  h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  /* File details section */
+  .file-details {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #555;
+  }
+  
+  /* Styling the input field for file selection */
+  input[type="file"] {
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
+  
+  /* Hover effect for the file input */
+  input[type="file"]:hover {
+    border-color: #4CAF50;
+  }
+  
+  /* Styling the upload button */
+  button {
+    padding: 12px 24px;
+    margin: 10px 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  /* Hover effect for buttons */
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Button disabled state */
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Title and page text */
+  h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  /* Page content container */
+  pre {
+    background-color: #f4f4f4;
+    padding: 15px;
+    border-radius: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    width: 100%;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  
+  /* Pagination controls container */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .pagination button {
+    margin: 5px;
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #3e8e41;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .pagination button:hover {
+    background-color: #45a049;
+  }
+  
+  .pagination span {
+    font-size: 16px;
+    margin: 0 15px;
+  }
+  
+  /* Additional CSS for jump-to-page input */
+  .jump-to-page {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+  }
+  
+  .jump-to-page input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    width: 150px;
+    transition: border-color 0.3s;
+  }
+  
+  .jump-to-page input:focus {
+    border-color: #4CAF50;
+  }
+  
+  .jump-to-page button {
+    padding: 12px 20px;
+    font-size: 16px;
+    background-color: #3e8e41;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .jump-to-page button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Media Queries for Responsiveness */
+  @media (max-width: 768px) {
+    .file-upload-container {
+      padding: 15px;
+      width: 95%;
+    }
+  
+    .pagination button,
+    .jump-to-page button {
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+  
+    .pagination span {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .file-upload-container {
+      width: 100%;
+      padding: 10px;
+    }
+  
+    .pagination {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .pagination button {
+      width: 100%;
+      margin: 5px 0;
+    }
+  
+    .jump-to-page {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .jump-to-page input,
+    .jump-to-page button {
+      width: 100%;
+      margin: 5px 0;
+    }
+  }
+  
