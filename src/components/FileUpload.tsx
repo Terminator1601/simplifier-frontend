@@ -1,12 +1,14 @@
 
 
+
+
 // import React, { useState, useEffect, useRef, ChangeEvent, DragEvent } from 'react';
 // import axios from 'axios';
 
 // interface MergedComponentProps {
 //   onFileUpload: (file: File) => void;
 //   onTextInput: (text: string) => void;
-//   onTextSelection: (selection: string) => void; // Ensure this prop is passed
+//   onTextSelection: (selection: string) => void;
 //   file: File | null;
 // }
 
@@ -87,14 +89,12 @@
 //     onTextInput(e.target.value);
 //   };
 
-//   // Handle fade-in animation on page change
 //   useEffect(() => {
 //     setFadeIn(false);
 //     const timer = setTimeout(() => setFadeIn(true), 50); // Delay for smooth fade
 //     return () => clearTimeout(timer);
 //   }, [currentPage]);
 
-//   // Handle text selection event
 //   useEffect(() => {
 //     const handleSelection = () => {
 //       const selection = window.getSelection();
@@ -109,12 +109,12 @@
 
 //   const handleJumpToPage = () => {
 //     const page = parseInt(jumpToPage, 10);
-//     if (page >= 1 && page <= extractedText.length) {
-//       setCurrentPage(page);
-//       setJumpToPage('');
-//     } else {
+//     if (!page || page < 1 || page > extractedText.length) {
 //       alert('Invalid page number');
+//       return;
 //     }
+//     setCurrentPage(page);
+//     setJumpToPage('');
 //   };
 
 //   return (
@@ -234,7 +234,7 @@
 //               type="number"
 //               value={jumpToPage}
 //               onChange={(e) => setJumpToPage(e.target.value)}
-//               className="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+//               className="w-20 px-2 py-1 border border-gray-300 rounded"
 //             />
 //             <button
 //               onClick={handleJumpToPage}
@@ -301,6 +301,16 @@ export default function MergedComponent({
   const [fadeIn, setFadeIn] = useState(true);
   const textRef = useRef<HTMLDivElement>(null);
 
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; show: boolean }>({
+    x: 0,
+    y: 0,
+    show: false,
+  });
+
+  // Selected text for simplifying
+  const [selectedText, setSelectedText] = useState<string>('');
+
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
@@ -361,23 +371,40 @@ export default function MergedComponent({
     onTextInput(e.target.value);
   };
 
-  useEffect(() => {
-    setFadeIn(false);
-    const timer = setTimeout(() => setFadeIn(true), 50); // Delay for smooth fade
-    return () => clearTimeout(timer);
-  }, [currentPage]);
+  const handleSelection = () => {
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim().length > 0) {
+      setSelectedText(selection.toString().trim());
+      onTextSelection(selection.toString().trim());
+    }
+  };
 
-  useEffect(() => {
-    const handleSelection = () => {
-      const selection = window.getSelection();
-      if (selection && selection.toString().trim().length > 0) {
-        onTextSelection(selection.toString().trim());
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const selected = window.getSelection()?.toString().trim();
+    if (selected && selected.length > 0) {
+      setSelectedText(selected);
+      setContextMenu({
+        x: e.clientX,
+        y: e.clientY,
+        show: true,
+      });
+    }
+  };
+
+  const handleSimplify = async () => {
+    // Send the selected text to the backend for simplification
+    setContextMenu({ ...contextMenu, show: false });
+    if (selectedText) {
+      try {
+        const response = await axios.post('http://127.0.0.1:5000/simplify', { text: selectedText });
+        // Handle the response, assuming the backend returns simplified text
+        console.log('Simplified text:', response.data.simplifiedText);
+      } catch (err) {
+        console.error('Error simplifying text:', err);
       }
-    };
-
-    document.addEventListener('mouseup', handleSelection);
-    return () => document.removeEventListener('mouseup', handleSelection);
-  }, [onTextSelection]);
+    }
+  };
 
   const handleJumpToPage = () => {
     const page = parseInt(jumpToPage, 10);
@@ -389,8 +416,37 @@ export default function MergedComponent({
     setJumpToPage('');
   };
 
+  useEffect(() => {
+    setFadeIn(false);
+    const timer = setTimeout(() => setFadeIn(true), 50); // Delay for smooth fade
+    return () => clearTimeout(timer);
+  }, [currentPage]);
+
+  useEffect(() => {
+    document.addEventListener('mouseup', handleSelection);
+    return () => document.removeEventListener('mouseup', handleSelection);
+  }, []);
+
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-colors duration-200 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90">
+    <div
+      className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-colors duration-200 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90"
+      onContextMenu={handleContextMenu} // Add the context menu handler here
+    >
+      {/* Context Menu for Simplification */}
+      {contextMenu.show && (
+        <div
+          className="absolute bg-white border border-gray-300 shadow-md rounded-md w-48"
+          style={{ top: contextMenu.y, left: contextMenu.x }}
+        >
+          <button
+            className="w-full text-left p-2 text-gray-700 hover:bg-gray-100"
+            onClick={handleSimplify}
+          >
+            Simplify
+          </button>
+        </div>
+      )}
+
       <div className="flex justify-center space-x-4 mb-4">
         <button
           onClick={() => setActiveMode('pdf')}
